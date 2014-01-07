@@ -28,17 +28,17 @@ import com.ceit.vic.device.service.ModuleService;
 
 @Component("moduleService")
 public class ModuleServiceImpl implements ModuleService {
-	String jbossLocation,modulesLocation;
+	String jbossLocation, modulesLocation;
 	Document document;
 	Element rootElm;
 	File file;
-	Map<String, Module> moduleMap=new HashMap<String,Module>();
+	Map<String, Module> moduleMap = new HashMap<String, Module>();
 	InstalledLocalContainer container;
+
 	public ModuleServiceImpl() {
-		
+
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Module> moduleStatus(String xmlPath) throws Exception {
@@ -53,9 +53,10 @@ public class ModuleServiceImpl implements ModuleService {
 		for (Element moduleElement : moduleElmList) {
 			if (moduleElement.attributeValue("ID").equals("jbossLocation")) {
 				jbossLocation = moduleElement.getTextTrim();
-			}else if (moduleElement.attributeValue("ID").equals("modulesLocation")) {
+			} else if (moduleElement.attributeValue("ID").equals(
+					"modulesLocation")) {
 				modulesLocation = moduleElement.getTextTrim();
-			}else {
+			} else {
 				Module module = new Module();
 				module.setName(moduleElement.attributeValue("name"));
 				module.setId(moduleElement.attributeValue("ID"));
@@ -67,7 +68,8 @@ public class ModuleServiceImpl implements ModuleService {
 					project.setName(projectElement.attributeValue("name"));
 					project.setType(projectElement.attributeValue("type"));
 					if (project.getName().equals("web")) {
-						module.setUrl("http://localhost:8080/"+project.getName()+"/index.jsp");
+						module.setUrl("http://localhost:8080/"
+								+ project.getName() + "/index.jsp");
 					}
 					projectList.add(project);
 				}
@@ -77,72 +79,94 @@ public class ModuleServiceImpl implements ModuleService {
 			}
 		}
 		container = new JBoss42xInstalledLocalContainer(
-				new JBossExistingLocalConfiguration(jbossLocation+"server/default"));
+				new JBossExistingLocalConfiguration(jbossLocation
+						+ "server/default"));
 		container.setHome(jbossLocation);
 		return moduleList;
 	}
 
 	@Override
 	public void deploy(String moduleId) throws Exception {
-		/*InstalledLocalContainer container = new JBoss42xInstalledLocalContainer(
-				new JBossExistingLocalConfiguration(jbossLocation+"server/default"));
-		container.setHome(jbossLocation);*/
-		Deployable ejb=null,web=null;
-		String webURL=null;
+		/*
+		 * InstalledLocalContainer container = new
+		 * JBoss42xInstalledLocalContainer( new
+		 * JBossExistingLocalConfiguration(jbossLocation+"server/default"));
+		 * container.setHome(jbossLocation);
+		 */
+		Deployable ejb = null, web = null;
+		String webURL = null;
 		Module module = moduleMap.get(moduleId);
 		List<Project> projects = module.getProjects();
 		for (Project project : projects) {
 			if (project.getType().equals("ejb")) {
-				ejb = new EJB(modulesLocation+project.getName()+".jar");
-			}else if (project.getType().equals("web")) {
-				web = new WAR(modulesLocation+project.getName()+".war");
-				webURL = "http://localhost:8080/"+project.getName()+"/index.jsp";
+				ejb = new EJB(modulesLocation + project.getName() + ".jar");
+			} else if (project.getType().equals("web")) {
+				web = new WAR(modulesLocation + project.getName() + ".war");
+				webURL = "http://localhost:8080/" + project.getName()
+						+ "/index.jsp";
 			}
 		}
-		//container.start();
+		// container.start();
 		Deployer deployer = new JBossInstalledLocalDeployer(container);
-		if (ejb!=null) {
+		if (ejb != null) {
 			System.out.println("开始部署ejb........");
 			deployer.deploy(ejb);
 			System.out.println("结束部署ejb........");
 		}
-		if (web!=null) {
+		if (web != null) {
 			System.out.println("开始部署web........");
-			//deployer.deploy(web, new URLDeployableMonitor(new URL(webURL)));
+			// deployer.deploy(web, new URLDeployableMonitor(new URL(webURL)));
 			deployer.deploy(web);
-			System.out.println("结束部署web........请访问"+webURL);
+			System.out.println("结束部署web........请访问" + webURL);
 		}
 		Element moduleElement = rootElm.elementByID(moduleId);
 		moduleElement.attribute("loaded").setValue("true");
-		OutputFormat outFmt = new OutputFormat("\t", true);  
-	    outFmt.setEncoding("UTF-8");  
-	    XMLWriter output = new XMLWriter(new FileOutputStream(file), outFmt);    
-	    output.write(document);  
-	    output.close();  
+		OutputFormat outFmt = new OutputFormat("\t", true);
+		outFmt.setEncoding("UTF-8");
+		XMLWriter output = new XMLWriter(new FileOutputStream(file), outFmt);
+		output.write(document);
+		output.close();
 		System.out.println("xml更新完毕");
 	}
-
 
 	@Override
 	public void undeploy(String moduleId) throws Exception {
 		Module module = moduleMap.get(moduleId);
 		List<Project> projects = module.getProjects();
-		Deployable web=null;
+		Deployable web = null;
 		for (Project project : projects) {
 			if (project.getType().equals("web")) {
-				web = new WAR(modulesLocation+project.getName()+".war");
+				web = new WAR(modulesLocation + project.getName() + ".war");
 			}
 		}
 		Deployer deployer = new JBossInstalledLocalDeployer(container);
 		deployer.undeploy(web);
-		System.out.println("undeploy"+module.getName());
+		System.out.println("undeploy" + module.getName());
 		Element moduleElement = rootElm.elementByID(moduleId);
 		moduleElement.attribute("loaded").setValue("false");
-		OutputFormat outFmt = new OutputFormat("\t", true);  
-	    outFmt.setEncoding("UTF-8");  
-	    XMLWriter output = new XMLWriter(new FileOutputStream(file), outFmt);    
-	    output.write(document);  
-	    output.close();  
+		OutputFormat outFmt = new OutputFormat("\t", true);
+		outFmt.setEncoding("UTF-8");
+		XMLWriter output = new XMLWriter(new FileOutputStream(file), outFmt);
+		output.write(document);
+		output.close();
+	}
+
+	@Override
+	public void addModule(Module module)throws Exception {
+		Element moduleElement = rootElm.addElement("module");
+		moduleElement.addAttribute("ID", module.getId())
+				.addAttribute("name", module.getName())
+				.addAttribute("loaded", module.getLoaded());
+		for (Project project : module.getProjects()) {
+			Element projectElement = moduleElement.addElement("project");
+			projectElement.addAttribute("name",project.getName() );
+			projectElement.addAttribute("type",project.getType() );
+		}
+		OutputFormat outFmt = new OutputFormat("\t", true);
+		outFmt.setEncoding("UTF-8");
+		XMLWriter output = new XMLWriter(new FileOutputStream(file), outFmt);
+		output.write(document);
+		output.close();
 	}
 
 }

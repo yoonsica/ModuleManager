@@ -22,4 +22,5 @@ public interface ModuleService {
 	 */
 	public void undeploy(String moduleId) throws Exception;
 	
+	public void addModule(Module module) throws Exception;
 }

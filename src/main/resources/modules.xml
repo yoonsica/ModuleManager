@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <modules>
-	<module ID="BDZInfo" name="变电站基础信息" loaded="false">
+	<module ID="BDZInfo" name="变电站基础信息" loaded="true">
 		<project name="BDZinfoWeb" type="web"/>
 		<project name="BDZinfoEjb" type="ejb"/>
 	</module>

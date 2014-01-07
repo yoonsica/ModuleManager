@@ -62,14 +62,14 @@ public class ModuleController {
 		return "OK";
 	}
 
-	@RequestMapping("/fileUpload")
-	public String fileUpload(@RequestParam("ejb") CommonsMultipartFile ejbFile,
+	@RequestMapping("/addModule")
+	public String addModule(@RequestParam("ejb") CommonsMultipartFile ejbFile,
 			@RequestParam("web") CommonsMultipartFile webFile,
 			@RequestParam("moduleId") String moduleId,
 			@RequestParam("moduleName") String moduleName) throws Exception {
 		// 判断文件是否存在
 		if (!ejbFile.isEmpty()) {
-			String path = "D:/modules/" + ejbFile.getOriginalFilename();
+			String path = moduleService.getModulesLocation() + ejbFile.getOriginalFilename();
 			File localFile = new File(path);
 			try {
 				ejbFile.transferTo(localFile);
@@ -81,7 +81,7 @@ public class ModuleController {
 		}
 		// 判断文件是否存在
 		if (!webFile.isEmpty()) {
-			String path = "D:/modules/" + webFile.getOriginalFilename();
+			String path = moduleService.getModulesLocation() + webFile.getOriginalFilename();
 			File localFile = new File(path);
 			try {
 				webFile.transferTo(localFile);
@@ -106,7 +106,59 @@ public class ModuleController {
 		projects.add(webProject);
 		module.setProjects(projects);
 		moduleService.addModule(module);
-		return "redirect:status";
+		return "redirect:/modules/status";
 	}
 
+	@RequestMapping("/updateModule")
+	public String updateModule(@RequestParam("ejb") CommonsMultipartFile ejbFile,
+			@RequestParam("web") CommonsMultipartFile webFile,
+			@RequestParam("moduleId") String moduleId,
+			@RequestParam("moduleName") String moduleName) throws Exception {
+		// 判断文件是否存在
+		if (!ejbFile.isEmpty()) {
+			String path = moduleService.getModulesLocation() + ejbFile.getOriginalFilename();
+			File localFile = new File(path);
+			try {
+				ejbFile.transferTo(localFile);
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		// 判断文件是否存在
+		if (!webFile.isEmpty()) {
+			String path = moduleService.getModulesLocation() + webFile.getOriginalFilename();
+			File localFile = new File(path);
+			try {
+				webFile.transferTo(localFile);
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		Module module = new Module();
+		module.setId(moduleId);
+		module.setLoaded("false");
+		module.setName(moduleName);
+		List<Project> projects = new ArrayList<Project>();
+		Project ejbProject = new Project();
+		ejbProject.setName(ejbFile.getOriginalFilename());
+		ejbProject.setType("ejb");
+		Project webProject = new Project();
+		webProject.setName(webFile.getOriginalFilename());
+		webProject.setType("web");
+		projects.add(ejbProject);
+		projects.add(webProject);
+		module.setProjects(projects);
+		moduleService.updateModule(module);
+		return "redirect:/modules/status";
+	}
+	
+	@RequestMapping("/deleteModule/{moduleId}")
+	public String deleteModule(@PathVariable("moduleId") String moduleId) throws Exception {
+		moduleService.deleteModule(moduleId);
+		return "redirect:/modules/status";
+	}
 }

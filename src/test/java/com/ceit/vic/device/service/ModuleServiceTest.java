@@ -30,5 +30,6 @@ public class ModuleServiceTest {
 	public void testModuleStatus() throws Exception{
 		//service.moduleStatus("src/main/resources/modules.xml");
 		//service.undeploy("BDZInfo");
+		//service.deleteModule("BDZInfo");
 	}
 }

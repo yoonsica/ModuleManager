@@ -1,12 +1,16 @@
 package com.ceit.vic.device.serviceImpl;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.codehaus.cargo.container.InstalledLocalContainer;
 import org.codehaus.cargo.container.deployable.Deployable;
 import org.codehaus.cargo.container.deployable.EJB;
@@ -38,6 +42,10 @@ public class ModuleServiceImpl implements ModuleService {
 	public ModuleServiceImpl() {
 
 	}
+	@Override
+	public String getModulesLocation() {
+		return modulesLocation;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -67,7 +75,7 @@ public class ModuleServiceImpl implements ModuleService {
 					Project project = new Project();
 					project.setName(projectElement.attributeValue("name"));
 					project.setType(projectElement.attributeValue("type"));
-					if (project.getName().equals("web")) {
+					if (project.getType().equals("web")) {
 						module.setUrl("http://localhost:8080/"
 								+ project.getName() + "/index.jsp");
 					}
@@ -142,6 +150,8 @@ public class ModuleServiceImpl implements ModuleService {
 		Deployer deployer = new JBossInstalledLocalDeployer(container);
 		deployer.undeploy(web);
 		System.out.println("undeploy" + module.getName());
+		module.setLoaded("false");
+		moduleMap.put(moduleId, module);
 		Element moduleElement = rootElm.elementByID(moduleId);
 		moduleElement.attribute("loaded").setValue("false");
 		OutputFormat outFmt = new OutputFormat("\t", true);
@@ -153,6 +163,89 @@ public class ModuleServiceImpl implements ModuleService {
 
 	@Override
 	public void addModule(Module module)throws Exception {
+		Element moduleElement = rootElm.addElement("module");
+		moduleElement.addAttribute("ID", module.getId())
+				.addAttribute("name", module.getName())
+				.addAttribute("loaded", module.getLoaded());
+		for (Project project : module.getProjects()) {
+			Element projectElement = moduleElement.addElement("project");
+			projectElement.addAttribute("name",project.getName() );
+			projectElement.addAttribute("type",project.getType() );
+		}
+		OutputFormat outFmt = new OutputFormat("\t", true);
+		outFmt.setEncoding("UTF-8");
+		XMLWriter output = new XMLWriter(new FileOutputStream(file), outFmt);
+		output.write(document);
+		output.close();
+	}
+
+	@Override
+	public void deleteModule(String moduleId){
+		Module module = moduleMap.get(moduleId);
+		System.out.println(module+"************"+module.getLoaded());
+		if (module.getLoaded().equals("true")) {
+			try {
+				undeploy(moduleId);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		for (Project project : module.getProjects()) {
+			if (project.getType().equals("ejb")) {
+				File file = new File(modulesLocation+project.getName()+".jar");
+				System.out.println("删除对应的ejb工程"+modulesLocation+project.getName()+".jar");
+				if (file.isDirectory()) {
+					try {
+						FileUtils.deleteDirectory(file);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else {
+					file.delete();
+				}
+			}else if (project.getType().equals("web")) {
+				File file = new File(modulesLocation+project.getName()+".war");
+				System.out.println("删除对应的web工程"+modulesLocation+project.getName()+".war");
+				if (file.isDirectory()) {
+					try {
+						FileUtils.deleteDirectory(file);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else {
+					file.delete();
+				}
+			}
+		}
+		Element element = rootElm.elementByID(moduleId);
+		rootElm.remove(element);
+		OutputFormat outFmt = new OutputFormat("\t", true);
+		outFmt.setEncoding("UTF-8");
+		XMLWriter output;
+		try {
+			output = new XMLWriter(new FileOutputStream(file), outFmt);
+			output.write(document);
+			output.close();
+		} catch (UnsupportedEncodingException | FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		moduleMap.remove(module.getId());
+	}
+
+	@Override
+	public void updateModule(Module module) throws Exception {
+		deleteModule(module.getId());
+		Element oldModuleElement = rootElm.elementByID(module.getId());
+		rootElm.remove(oldModuleElement);
+		
 		Element moduleElement = rootElm.addElement("module");
 		moduleElement.addAttribute("ID", module.getId())
 				.addAttribute("name", module.getName())

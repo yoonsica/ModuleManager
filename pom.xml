@@ -128,6 +128,7 @@
 				<container>
 					<containerId>jboss42x</containerId>
 					<home>E:\jboss-4.2.3.GA</home>
+					<logLevel>debug</logLevel>
 				</container>
 				<configuration>
                        <type>existing</type>

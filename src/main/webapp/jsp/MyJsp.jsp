@@ -35,11 +35,19 @@
       <script src="${basePath }Flat-UI-master/js/html5shiv.js"></script>
     <![endif]-->
 <script type="text/javascript">
+	function add(){
+		location.href = "modules/addModule";
+	}
+	function deleteModule(moduleId){
+		alert("${basePath }modules/deleteModule/"+moduleId)
+		location.href = "${basePath }modules/deleteModule/"+moduleId;
+	}
 	function deploy(btn, moduleId) {
+		alert(moduleId);
 		$(btn).attr('disabled', true);
 		$.ajax({
 			type : "POST",
-			url : "deploy/" + moduleId,
+			url : "modules/deploy/" + moduleId,
 			success : function(data) {
 				$(btn).attr('value', '卸载');
 				$(btn).attr("onclick", "undeploy(this,'${module.id}')");
@@ -49,10 +57,11 @@
 		});
 	}
 	function undeploy(btn, moduleId) {
+		alert(moduleId);
 		$(btn).attr('disabled', true);
 		$.ajax({
 			type : "POST",
-			url : "undeploy/" + moduleId,
+			url : "modules/undeploy/" + moduleId,
 			success : function(data) {
 				$(btn).attr('value', '装载');
 				$(btn).attr("onclick", "deploy(this,'${module.id}')");
@@ -68,7 +77,7 @@
 <div class="container">
 	<div id="tableDiv" style="min-height: 180px;">
 		<dl class="palette palette-emerald">
-			<dt>设备列表</dt>
+			<dt>设备列表<input type="button" value="添加模块" onclick="add()"/></dt>
 		</dl>
 		<table class="table table-hover">
 			<thead>
@@ -87,12 +96,16 @@
 						<c:if test="${module.loaded=='false' }">
 							<td id="${module.id }">否</td>
 							<td><input type="button" value="装载"
-								onclick="deploy(this,'${module.id}')" /></td>
+								onclick="deploy(this,'${module.id}')" />
+								<%--<input type="button" value="修改" onclick="update('${module.id }')" />
+								--%><input type="button" value="删除" onclick="deleteModule('${module.id }')" />
+							</td>
 						</c:if>
 						<c:if test="${module.loaded=='true' }">
 							<td id="${module.id }">是</td>
 							<td><input type="button" value="卸载"
 								onclick="undeploy(this,'${module.id}')" />
+								<input type="button" value="删除" onclick="deleteModule('${module.id }')" />
 							</td>
 						</c:if>
 					</tr>

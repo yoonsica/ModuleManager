@@ -21,6 +21,23 @@ public interface ModuleService {
 	 * @throws Exception
 	 */
 	public void undeploy(String moduleId) throws Exception;
-	
+	/**
+	 * 在xml里新增一个模块
+	 * @param module
+	 * @throws Exception
+	 */
 	public void addModule(Module module) throws Exception;
+	/**
+	 * 根据模块id删除模块
+	 * @param moduleId
+	 * @throws Exception 
+	 */
+	public void deleteModule(String moduleId);
+	/**
+	 * 更新模块
+	 * @param module
+	 * @throws Exception
+	 */
+	public void updateModule(Module module) throws Exception;
+	String getModulesLocation();
 }

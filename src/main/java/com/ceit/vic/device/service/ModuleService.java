@@ -40,4 +40,5 @@ public interface ModuleService {
 	 */
 	public void updateModule(Module module) throws Exception;
 	String getModulesLocation();
+	Module getModuleById(String moduleId);
 }

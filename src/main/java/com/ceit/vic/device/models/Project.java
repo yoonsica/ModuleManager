@@ -6,6 +6,15 @@ public class Project {
 	public String getName() {
 		return name;
 	}
+	public Project(String name, String type) {
+		super();
+		this.name = name;
+		this.type = type;
+	}
+	public Project() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	public void setName(String name) {
 		this.name = name;
 	}

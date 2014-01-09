@@ -69,6 +69,7 @@ public class ModuleController {
 			@RequestParam("moduleName") String moduleName) throws Exception {
 		// 判断文件是否存在
 		if (!ejbFile.isEmpty()) {
+			System.out.println("ejbfile类型："+ejbFile.getContentType()+"****************");
 			String path = moduleService.getModulesLocation() + ejbFile.getOriginalFilename();
 			File localFile = new File(path);
 			try {
@@ -114,8 +115,14 @@ public class ModuleController {
 			@RequestParam("web") CommonsMultipartFile webFile,
 			@RequestParam("moduleId") String moduleId,
 			@RequestParam("moduleName") String moduleName) throws Exception {
+		List<Project> projects = new ArrayList<Project>();
+
 		// 判断文件是否存在
 		if (!ejbFile.isEmpty()) {
+			Project ejbProject = new Project();
+			ejbProject.setName(ejbFile.getOriginalFilename());
+			ejbProject.setType("ejb");
+			projects.add(ejbProject);
 			String path = moduleService.getModulesLocation() + ejbFile.getOriginalFilename();
 			File localFile = new File(path);
 			try {
@@ -128,6 +135,10 @@ public class ModuleController {
 		}
 		// 判断文件是否存在
 		if (!webFile.isEmpty()) {
+			Project webProject = new Project();
+			webProject.setName(webFile.getOriginalFilename());
+			webProject.setType("web");
+			projects.add(webProject);
 			String path = moduleService.getModulesLocation() + webFile.getOriginalFilename();
 			File localFile = new File(path);
 			try {
@@ -142,15 +153,6 @@ public class ModuleController {
 		module.setId(moduleId);
 		module.setLoaded("false");
 		module.setName(moduleName);
-		List<Project> projects = new ArrayList<Project>();
-		Project ejbProject = new Project();
-		ejbProject.setName(ejbFile.getOriginalFilename());
-		ejbProject.setType("ejb");
-		Project webProject = new Project();
-		webProject.setName(webFile.getOriginalFilename());
-		webProject.setType("web");
-		projects.add(ejbProject);
-		projects.add(webProject);
 		module.setProjects(projects);
 		moduleService.updateModule(module);
 		return "redirect:/modules/status";
@@ -161,4 +163,21 @@ public class ModuleController {
 		moduleService.deleteModule(moduleId);
 		return "redirect:/modules/status";
 	}
+	
+	@RequestMapping("/toUpdateModule/{moduleId}")
+	public ModelAndView toUpdateModule(@PathVariable String moduleId){
+		ModelAndView mav = new ModelAndView("update");
+		/*Module module = new Module();
+		module.setId("aa");
+		module.setName("aaa");
+		module.setLoaded("true");
+		List<Project> projects = new ArrayList<Project>();
+		projects.add(new Project("ejb", "ejb"));
+		projects.add(new Project("web","web"));
+		module.setProjects(projects);*/
+		//去service取得module对象
+		mav.addObject("module", moduleService.getModuleById(moduleId));
+		return mav;
+	}
+	
 }

@@ -242,6 +242,26 @@ public class ModuleServiceImpl implements ModuleService {
 
 	@Override
 	public void updateModule(Module module) throws Exception {
+		Module module2 = moduleMap.get(module.getId());
+		Project ejbProject = null,webProject = null;
+		for (Project project : module2.getProjects()) {
+			if (project.getType().equals("ejb")) {
+				ejbProject = project;
+			}else {
+				webProject = project;
+			}
+		}
+		if (module.getProjects().size()==0) {
+			module.setProjects(module2.getProjects());
+		}else if (module.getProjects().size()==1) {
+			List<Project> projects = module.getProjects();
+			if (projects.get(0).getType().equals("ejb")) {
+				projects.add(webProject);
+			}else {
+				projects.add(ejbProject);
+			}
+			module.setProjects(projects);
+		}
 		deleteModule(module.getId());
 		Element oldModuleElement = rootElm.elementByID(module.getId());
 		rootElm.remove(oldModuleElement);
@@ -250,16 +270,23 @@ public class ModuleServiceImpl implements ModuleService {
 		moduleElement.addAttribute("ID", module.getId())
 				.addAttribute("name", module.getName())
 				.addAttribute("loaded", module.getLoaded());
+		
 		for (Project project : module.getProjects()) {
-			Element projectElement = moduleElement.addElement("project");
-			projectElement.addAttribute("name",project.getName() );
-			projectElement.addAttribute("type",project.getType() );
+				Element projectElement = moduleElement.addElement("project");
+				projectElement.addAttribute("name",project.getName() );
+				projectElement.addAttribute("type",project.getType() );
 		}
+		
+		moduleMap.put(module.getId(), module);
 		OutputFormat outFmt = new OutputFormat("\t", true);
 		outFmt.setEncoding("UTF-8");
 		XMLWriter output = new XMLWriter(new FileOutputStream(file), outFmt);
 		output.write(document);
 		output.close();
+	}
+	@Override
+	public Module getModuleById(String moduleId) {
+		return moduleMap.get(moduleId);
 	}
 
 }

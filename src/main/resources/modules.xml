@@ -4,10 +4,6 @@
 		<project name="BDZinfoWeb" type="web"/>
 		<project name="BDZinfoEjb" type="ejb"/>
 	</module>
-	<!-- <module id="MisFrame" name="�豸ȫ��" loaded="false">
-		<project name="MisFrameWeb" type="web"></project>
-		<project name="MisFrameEjb" type="ejb"></project>
-	</module> -->
 	<module ID="jbossLocation" name="jboss位置">
 		E:/jboss-4.2.3.GA/
 	</module>

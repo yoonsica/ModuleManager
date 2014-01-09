@@ -4,6 +4,7 @@
 	String basePath = request.getScheme() + "://"
 			+ request.getServerName() + ":" + request.getServerPort()
 			+ path + "/";
+	request.setAttribute("basePath", basePath);
 %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -36,35 +37,37 @@
     <![endif]-->
 <script type="text/javascript">
 	function add(){
-		location.href = "modules/addModule";
+		location.href = "${basePath }jsp/upload.jsp";
 	}
 	function deleteModule(moduleId){
-		alert("${basePath }modules/deleteModule/"+moduleId)
 		location.href = "${basePath }modules/deleteModule/"+moduleId;
 	}
+	
+	function update(moduleId){
+		location.href = "${basePath }modules/toUpdateModule/"+moduleId;
+	}
+	
 	function deploy(btn, moduleId) {
-		alert(moduleId);
 		$(btn).attr('disabled', true);
 		$.ajax({
 			type : "POST",
-			url : "modules/deploy/" + moduleId,
+			url : "${basePath }modules/deploy/" + moduleId,
 			success : function(data) {
 				$(btn).attr('value', '卸载');
-				$(btn).attr("onclick", "undeploy(this,'${module.id}')");
+				$(btn).attr("onclick", "undeploy(this,'"+moduleId+"')");
 				$(btn).attr('disabled', false);
 				$("#" + moduleId).text("是");
 			}
 		});
 	}
 	function undeploy(btn, moduleId) {
-		alert(moduleId);
 		$(btn).attr('disabled', true);
 		$.ajax({
 			type : "POST",
-			url : "modules/undeploy/" + moduleId,
+			url : "${basePath }modules/undeploy/" + moduleId,
 			success : function(data) {
 				$(btn).attr('value', '装载');
-				$(btn).attr("onclick", "deploy(this,'${module.id}')");
+				$(btn).attr("onclick", "deploy(this,'"+moduleId+"')");
 				$(btn).attr('disabled', false);
 				$("#" + moduleId).text("否");
 			}
@@ -97,14 +100,15 @@
 							<td id="${module.id }">否</td>
 							<td><input type="button" value="装载"
 								onclick="deploy(this,'${module.id}')" />
-								<%--<input type="button" value="修改" onclick="update('${module.id }')" />
-								--%><input type="button" value="删除" onclick="deleteModule('${module.id }')" />
+								<input type="button" value="修改" onclick="update('${module.id }')" />
+								<input type="button" value="删除" onclick="deleteModule('${module.id }')" />
 							</td>
 						</c:if>
 						<c:if test="${module.loaded=='true' }">
 							<td id="${module.id }">是</td>
 							<td><input type="button" value="卸载"
 								onclick="undeploy(this,'${module.id}')" />
+								<input type="button" value="修改" onclick="update('${module.id }')" />
 								<input type="button" value="删除" onclick="deleteModule('${module.id }')" />
 							</td>
 						</c:if>

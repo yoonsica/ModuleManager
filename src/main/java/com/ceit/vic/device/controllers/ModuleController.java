@@ -67,13 +67,21 @@ public class ModuleController {
 			@RequestParam("web") CommonsMultipartFile webFile,
 			@RequestParam("moduleId") String moduleId,
 			@RequestParam("moduleName") String moduleName) throws Exception {
+		List<Project> projects = new ArrayList<Project>();
 		// 判断文件是否存在
 		if (!ejbFile.isEmpty()) {
-			System.out.println("ejbfile类型："+ejbFile.getContentType()+"****************");
 			String path = moduleService.getModulesLocation() + ejbFile.getOriginalFilename();
 			File localFile = new File(path);
+			Project ejbProject = new Project();
+			ejbProject.setName(localFile.getName().split(".jar")[0]);
+			System.out.println("localfile"+localFile.getName());
+			ejbProject.setType("ejb");
+			projects.add(ejbProject);
 			try {
-				ejbFile.transferTo(localFile);
+				if (!localFile.exists()) {
+					System.out.println("导入ejb文件到仓库");
+					ejbFile.transferTo(localFile);
+				}
 			} catch (IllegalStateException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -84,8 +92,14 @@ public class ModuleController {
 		if (!webFile.isEmpty()) {
 			String path = moduleService.getModulesLocation() + webFile.getOriginalFilename();
 			File localFile = new File(path);
+			Project webProject = new Project();
+			webProject.setName(localFile.getName().split(".war")[0]);
+			webProject.setType("web");
+			projects.add(webProject);
 			try {
-				webFile.transferTo(localFile);
+				if (!localFile.exists()) {
+					webFile.transferTo(localFile);
+				}
 			} catch (IllegalStateException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -96,15 +110,6 @@ public class ModuleController {
 		module.setId(moduleId);
 		module.setLoaded("false");
 		module.setName(moduleName);
-		List<Project> projects = new ArrayList<Project>();
-		Project ejbProject = new Project();
-		ejbProject.setName(ejbFile.getOriginalFilename());
-		ejbProject.setType("ejb");
-		Project webProject = new Project();
-		webProject.setName(webFile.getOriginalFilename());
-		webProject.setType("web");
-		projects.add(ejbProject);
-		projects.add(webProject);
 		module.setProjects(projects);
 		moduleService.addModule(module);
 		return "redirect:/modules/status";
@@ -119,12 +124,12 @@ public class ModuleController {
 
 		// 判断文件是否存在
 		if (!ejbFile.isEmpty()) {
-			Project ejbProject = new Project();
-			ejbProject.setName(ejbFile.getOriginalFilename());
-			ejbProject.setType("ejb");
-			projects.add(ejbProject);
 			String path = moduleService.getModulesLocation() + ejbFile.getOriginalFilename();
 			File localFile = new File(path);
+			Project ejbProject = new Project();
+			ejbProject.setName(localFile.getName());
+			ejbProject.setType("ejb");
+			projects.add(ejbProject);
 			try {
 				ejbFile.transferTo(localFile);
 			} catch (IllegalStateException e) {
@@ -135,12 +140,12 @@ public class ModuleController {
 		}
 		// 判断文件是否存在
 		if (!webFile.isEmpty()) {
-			Project webProject = new Project();
-			webProject.setName(webFile.getOriginalFilename());
-			webProject.setType("web");
-			projects.add(webProject);
 			String path = moduleService.getModulesLocation() + webFile.getOriginalFilename();
 			File localFile = new File(path);
+			Project webProject = new Project();
+			webProject.setName(localFile.getName());
+			webProject.setType("web");
+			projects.add(webProject);
 			try {
 				webFile.transferTo(localFile);
 			} catch (IllegalStateException e) {

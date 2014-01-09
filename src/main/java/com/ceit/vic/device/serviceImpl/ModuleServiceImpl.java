@@ -172,11 +172,12 @@ public class ModuleServiceImpl implements ModuleService {
 			projectElement.addAttribute("name",project.getName() );
 			projectElement.addAttribute("type",project.getType() );
 		}
-		OutputFormat outFmt = new OutputFormat("\t", true);
-		outFmt.setEncoding("UTF-8");
-		XMLWriter output = new XMLWriter(new FileOutputStream(file), outFmt);
-		output.write(document);
-		output.close();
+		OutputFormat   format   =   OutputFormat.createPrettyPrint(); 
+		format.setEncoding( "UTF-8"); 
+		XMLWriter writer  = new XMLWriter(new FileOutputStream(file), format);
+		writer.write(document);
+		writer.close();
+		moduleMap.put(module.getId(), module);
 	}
 
 	@Override

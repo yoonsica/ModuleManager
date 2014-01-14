@@ -23,18 +23,10 @@
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
 <!-- Loading Bootstrap -->
-<link href="${basePath }Flat-UI-master/bootstrap/css/bootstrap.css"
+<link href="${basePath }bootstrap/css/bootstrap.css"
 	rel="stylesheet">
-<!-- Loading Flat UI -->
-<link href="${basePath }Flat-UI-master/css/flat-ui.css" rel="stylesheet">
-
-<link rel="shortcut icon"
-	href="${basePath }Flat-UI-master/images/favicon.ico">
-<script src="${basePath }Flat-UI-master/js/jquery-1.8.3.min.js"></script>
-<!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
-<!--[if lt IE 9]>
-      <script src="${basePath }Flat-UI-master/js/html5shiv.js"></script>
-    <![endif]-->
+<script src="${basePath }bootstrap/js/jquery-1.8.3.min.js"></script>
+<script src="${basePath }bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 	function add(){
 		location.href = "${basePath }jsp/upload.jsp";
@@ -79,12 +71,13 @@
 <body>
 <div class="container">
 	<div id="tableDiv" style="min-height: 180px;">
-		<dl class="palette palette-emerald">
-			<dt>设备列表<input type="button" value="添加模块" onclick="add()"/></dt>
-		</dl>
-		<table class="table table-hover">
+		<div style="margin-bottom:5px; background-color: #028002;width: 100%;color: white;font-size:20px;font-weight: 800;height: 30px;line-height: 30px;">
+			模块列表&nbsp;<input type="button" value="添加" onclick="add()"/>
+		</div>
+		<table class="table table-bordered">
 			<thead>
 				<tr>
+					<th>#</th>
 					<th>模块名</th>
 					<th>访问地址</th>
 					<th>是否已经加载</th>
@@ -94,6 +87,7 @@
 			<tbody id="dataBody">
 				<c:forEach var="module" items="${moduleList }">
 					<tr>
+						<td><input type="checkbox" /></td>
 						<td>${module.name }</td>
 						<td>${module.url }</td>
 						<c:if test="${module.loaded=='false' }">

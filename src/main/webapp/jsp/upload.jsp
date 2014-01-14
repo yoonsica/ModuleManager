@@ -21,18 +21,10 @@ request.setAttribute("basePath", basePath);
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
 <!-- Loading Bootstrap -->
-<link href="${basePath }Flat-UI-master/bootstrap/css/bootstrap.css"
+<link href="${basePath }bootstrap/css/bootstrap.css"
 	rel="stylesheet">
-<!-- Loading Flat UI -->
-<link href="${basePath }Flat-UI-master/css/flat-ui.css" rel="stylesheet">
-
-<link rel="shortcut icon"
-	href="${basePath }Flat-UI-master/images/favicon.ico">
-<script src="${basePath }Flat-UI-master/js/jquery-1.8.3.min.js"></script>
-<!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
-<!--[if lt IE 9]>
-      <script src="${basePath }Flat-UI-master/js/html5shiv.js"></script>
-    <![endif]-->
+<script src="${basePath }bootstrap/js/jquery-1.8.3.min.js"></script>
+<script src="${basePath }bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript">
     $(document).ready(function(){
     	  $("#btn").click(function(){
@@ -50,32 +42,60 @@ request.setAttribute("basePath", basePath);
     	  });
     	});
     </script>
+    <style type="text/css">
+    </style>
   </head>
   
   <body>
   <div class="container">
-  <dl class="palette palette-emerald">
-			<dt>添加模块</dt>
-	</dl>
-  	<div style="max-width: 500px;min-width: 500px;float:left;">
-  	<form id="form" action="${basePath }modules/addModule" method="post" enctype="multipart/form-data">  
-    	模块ID<input type="text" name="moduleId" class="form-control"/>
-    	模块描述<input type="text" name="moduleName" class="form-control">
-        ejb工程<input type="file" name="ejb" class="form-control"/>  
-        web工程<input type="file" name="web" class="form-control"/>
+  <div style="margin-bottom:5px;background-color: #028002;width: 100%;color: white;font-size:20px;font-weight: 800;height: 30px;line-height: 30px;">
+			添加模块
+	</div>
+  	<form id="form" class="form-horizontal" action="${basePath }modules/addModule" method="post" enctype="multipart/form-data">  
+    	<div class="control-group">
+		    <label for="moduleId" class="control-label">模块ID</label>
+		    <div class="controls">
+		    	<div class="row">
+				    <div class="span3"><input type="text" name="moduleId" id="moduleId" placeholder="模块ID项请填写模块英文名称"/></div>
+		    		<div class="span4">模块ID项请填写模块英文名称</div>
+		    	</div>
+		    </div>
+		</div>
+		<div class="control-group">
+		    <label for="moduleName" class="control-label">模块描述</label>
+		    <div class="controls">
+		    	<div class="row">
+				    <div class="span3"><input type="text" name="moduleName" placeholder="模块描述项填写模块中文名称"></div>
+		    		<div class="span4">模块描述项填写模块中文名称</div>
+		    	</div>
+		    </div>
+		</div>
+		<div class="control-group">
+		    <label for="ejb" class="control-label">ejb工程</label>
+		    <div class="controls">
+		    	<div class="row">
+				    <div class="span3"><input type="file" name="ejb" placeholder="ejb工程请选择jar类型文件"/></div>
+		    		<div class="span4">ejb工程请选择jar类型文件</div>
+		    	</div>
+		    </div>
+		</div>
+		<div class="control-group">
+		    <label for="web" class="control-label">web工程</label>
+		    <div class="controls">
+		    	<div class="row">
+				    <div class="span3"><input type="file" name="web" placeholder="web工程请选择war类型文件"/></div>
+		    		<div class="span4">web工程请选择war类型文件</div>
+		    	</div>
+		    </div>
+		</div>
+		<div class="control-group">
+	    	<div class="controls">
+	    		<button type="submit" class="btn btn-success" id="btn" >
+				  提交
+				</button> 
+			</div>
+    	</div>
     </form> 
-    <button class="btn btn-default btn-wide" id="btn">
-		  提交
-		</button> 
-  	</div>
-  	<div style="float: left;margin: 20px,0,0,20px;">
-  	<ul>
-  		<li>模块ID项请填写模块英文名称</li>
-  		<li>模块描述项填写模块中文名称</li>
-  		<li>ejb工程请选择jar类型文件</li>
-  		<li>web工程请选择war类型文件</li>
-  	</ul>
-  	</div>
     </div>
   </body>
 </html>

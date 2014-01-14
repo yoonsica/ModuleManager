@@ -21,19 +21,10 @@ request.setAttribute("basePath", basePath);
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
 <!-- Loading Bootstrap -->
-<link href="${basePath }Flat-UI-master/bootstrap/css/bootstrap.css"
+<link href="${basePath }bootstrap/css/bootstrap.css"
 	rel="stylesheet">
-<!-- Loading Flat UI -->
-<link href="${basePath }Flat-UI-master/css/flat-ui.css" rel="stylesheet">
-
-<link rel="shortcut icon"
-	href="${basePath }Flat-UI-master/images/favicon.ico">
-<script src="${basePath }Flat-UI-master/js/jquery-1.8.3.min.js"></script>
-<script src="${basePath }Flat-UI-master/js/bootstrap.min.js"></script>
-<!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
-<!--[if lt IE 9]>
-      <script src="${basePath }Flat-UI-master/js/html5shiv.js"></script>
-    <![endif]-->
+<script src="${basePath }bootstrap/js/jquery-1.8.3.min.js"></script>
+<script src="${basePath }bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript">
     function reselejbfile(){
     	$("#selejbfile").hide();
@@ -47,7 +38,6 @@ request.setAttribute("basePath", basePath);
     }
     $(document).ready(function(){
     	  $("#btn").click(function(){
-    		  alert("submit");
     	    var str = $("input[name='ejb']").val();
     	    var reg = new RegExp(".jar$");
     	    if(str!=''){
@@ -70,31 +60,67 @@ request.setAttribute("basePath", basePath);
   
   <body>
   <div class="container">
-  <dl class="palette palette-emerald">
-			<dt>添加模块</dt>
-	</dl>
-  	<div style="max-width: 500px;min-width: 500px;float:left;">
-  	<form id="form" action="${basePath }modules/updateModule" method="post" enctype="multipart/form-data">  
-    	模块ID<input type="text" name="moduleId" class="form-control" value="${module.id }"/>
-    	模块描述<input type="text" name="moduleName" class="form-control" value="${module.name }">
+  <div style="margin-bottom:5px; background-color: #028002;width: 100%;color: white;font-size:20px;font-weight: 800;height: 30px;line-height: 30px;">
+			更新模块
+	</div>
+  	<form id="form" class="form-horizontal" action="${basePath }modules/updateModule" method="post" enctype="multipart/form-data">  
+    	<div class="control-group">
+		    <label for="moduleId" class="control-label">模块ID</label>
+		    <div class="controls">
+		    	<div class="row">
+    		    	<div class="span3"><input type="text" name="moduleId" value="${module.id }" placeholder="模块ID项请填写模块英文名称"/></div>
+    		    	<div class="span4">模块ID项请填写模块英文名称</div>
+		   		</div>
+		    </div>
+		</div>
+    	<div class="control-group">
+		    <label for="moduleName" class="control-label">模块描述</label>
+		    <div class="controls">
+			    <div class="row">
+			    	<div class="span3">
+			    		<input type="text" name="moduleName" value="${module.name }" placeholder="模块描述项填写模块中文名称">
+					</div>
+					<div class="span4">
+				    	 模块描述项填写模块中文名称
+				    </div>
+				</div>
+		    </div>
+		</div>
+    	
     	<c:forEach var="project" items="${module.projects }">
-    		<c:if test="${project.type=='ejb' }">ejb工程 <input type="file" name="ejb" class="form-control" style="display: none;"/><input type="text" name="ejbloc" class="form-control" value="${project.name }"/><input type="button" id="selejbfile" onclick="reselejbfile()" value="重新选择ejb工程" /> </c:if>
-    		<c:if test="${project.type=='web' }"><br/>web工程<input type="file" name="web" class="form-control" style="display: none;"/><input type="text" name="webloc" class="form-control" value="${project.name }"/><input type="button" id="selwebfile" onclick="reselwebfile()" value="重新选择web工程"/></c:if>
+    		<c:if test="${project.type=='ejb' }">
+	    		<div class="control-group">
+	    			<label for="ejb" class="control-label">ejb工程</label>
+	    			<div class="controls">
+	    				<div class="row">
+			    			<input type="file" id="ejb" name="ejb" style="display: none;"/>
+			    			<div class="span3"><input type="text" name="ejbloc" value="${project.name }"/></div>
+			    			<div class="span4"><input type="button" id="selejbfile" onclick="reselejbfile()" value="重新选择ejb工程" /></div>
+		    			</div>
+	    			</div>
+	    		</div>
+    		</c:if>
+    		<c:if test="${project.type=='web' }">
+	    		<div class="control-group">
+	    			<label for="web" class="control-label">web工程</label>
+	    			<div class="controls">
+		    			<div class="row">
+		    				<input type="file" name="web" style="display: none;"/>
+	    			    	<div class="span3"><input type="text" name="webloc" value="${project.name }"/></div>
+	    			    	<div class="span4"><input type="button" id="selwebfile" onclick="reselwebfile()" value="重新选择web工程"/></div>
+		    			</div>
+	    			</div>
+	    		</div>
+    		</c:if>
     	</c:forEach>
-       
+    	<div class="control-group">
+	    	<div class="controls">
+	    		<button type="submit" class="btn btn-success" id="btn" >
+				  提交
+				</button> 
+			</div>
+    	</div>
     </form> 
-    <button class="btn btn-default btn-wide" id="btn" >
-		  提交
-		</button> 
   	</div>
-  	<div style="float: left;margin: 20px,0,0,20px;">
-  	<ul>
-  		<li>模块ID项请填写模块英文名称</li>
-  		<li>模块描述项填写模块中文名称</li>
-  		<li>ejb工程请选择jar类型文件</li>
-  		<li>web工程请选择war类型文件</li>
-  	</ul>
-  	</div>
-    </div>
   </body>
 </html>

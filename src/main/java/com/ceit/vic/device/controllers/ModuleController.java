@@ -2,8 +2,10 @@ package com.ceit.vic.device.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,15 +35,17 @@ public class ModuleController {
 	@RequestMapping("/status")
 	public ModelAndView modules() throws Exception {
 		ModelAndView mav = new ModelAndView("MyJsp");
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
+		Properties prop = new Properties();
+		InputStream in = this.getClass().getResourceAsStream("/location.properties");
+		prop.load(in);
+		System.out.println(prop.getProperty("module"));
+		/*HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
 				.getRequestAttributes()).getRequest();
 		String pathname = request.getSession().getServletContext()
-				.getRealPath("/");// D:\Program Files\Apache Software
+				.getRealPath("/");*/// D:\Program Files\Apache Software
 									// Foundation\Tomcat
 									// 7.0\webapps\filemanager\
-		System.out.println(pathname);
-		List<Module> moduleList = moduleService.moduleStatus(pathname
-				+ "WEB-INF/classes/modules.xml");
+		List<Module> moduleList = moduleService.moduleStatus(prop.getProperty("module"));
 		mav.addObject("moduleList", moduleList);
 		return mav;
 	}
@@ -172,17 +176,34 @@ public class ModuleController {
 	@RequestMapping("/toUpdateModule/{moduleId}")
 	public ModelAndView toUpdateModule(@PathVariable String moduleId){
 		ModelAndView mav = new ModelAndView("update");
-		/*Module module = new Module();
-		module.setId("aa");
-		module.setName("aaa");
-		module.setLoaded("true");
-		List<Project> projects = new ArrayList<Project>();
-		projects.add(new Project("ejb", "ejb"));
-		projects.add(new Project("web","web"));
-		module.setProjects(projects);*/
 		//去service取得module对象
 		mav.addObject("module", moduleService.getModuleById(moduleId));
 		return mav;
+	}
+	
+	@RequestMapping("/multiDeploy/")
+	public String multiDeploy() throws Exception{
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
+				.getRequestAttributes()).getRequest();
+        //获得参数数组
+        String moduleIds[]=request.getParameterValues("moduleId");
+        for (String moduleId : moduleIds) {
+    		moduleService.deploy(moduleId);
+		}
+		return "redirect:/modules/status";
+	}
+	
+	@RequestMapping("/multiUnDeploy/{moduleIds}")
+	public String multiUnDeploy(@PathVariable String[] moduleIds) throws Exception{
+		/*HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
+				.getRequestAttributes()).getRequest();
+        //获得参数数组
+        String moduleIds[]=request.getParameterValues("moduleIds");*/
+        for (String moduleId : moduleIds) {
+        	System.out.println(moduleId);
+    		moduleService.undeploy(moduleId);
+		}
+		return "redirect:/modules/status";
 	}
 	
 }

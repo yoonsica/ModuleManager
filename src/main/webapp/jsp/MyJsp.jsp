@@ -28,6 +28,16 @@
 <script src="${basePath }bootstrap/js/jquery-1.8.3.min.js"></script>
 <script src="${basePath }bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript">
+	function selectAll(){
+		$("input[name='moduleId']").each(function(){this.checked=true;}); 
+		$("#allSelect").attr("value","取消全选");
+		$("#allSelect").attr("onclick","unSelectAll()");
+	}
+	function unSelectAll(){
+		$("input[name='moduleId']").each(function(){this.checked=false;});
+		$("#allSelect").attr("value","全选");
+		$("#allSelect").attr("onclick","selectAll()");
+	}
 	function add(){
 		location.href = "${basePath }jsp/upload.jsp";
 	}
@@ -37,6 +47,22 @@
 	
 	function update(moduleId){
 		location.href = "${basePath }modules/toUpdateModule/"+moduleId;
+	}
+	
+	function multiUnDeploy(){
+		 var chk_value =[];    
+		  $('input[name="moduleId"]:checked').each(function(){    
+		   chk_value.push($(this).val());    
+		  });    
+		  alert(chk_value.length==0 ?'你还没有选择任何内容！':chk_value);
+		  $.ajax({
+				type : "POST",
+				url : "${basePath }modules/multiUnDeploy/" + chk_value,
+				success : function(data) {
+					location.href = "${basePath }modules/status";
+				}
+			});
+		//location.href = "${basePath }modules/multiUnDeploy/";
 	}
 	
 	function deploy(btn, moduleId) {
@@ -70,14 +96,15 @@
 
 <body>
 <div class="container">
+<form action="${basePath }modules/multiDeploy/">
 	<div id="tableDiv" style="min-height: 180px;">
 		<div style="margin-bottom:5px; background-color: #028002;width: 100%;color: white;font-size:20px;font-weight: 800;height: 30px;line-height: 30px;">
-			模块列表&nbsp;<input type="button" value="添加" onclick="add()"/>
+			模块列表&nbsp;<input type="button" value="添加" onclick="add()"/>&nbsp;<input type="submit" value="批量部署"/>&nbsp;<input type="button" value="批量卸载" onclick="multiUnDeploy()"/>
 		</div>
 		<table class="table table-bordered">
 			<thead>
 				<tr>
-					<th>#</th>
+					<th><input id="allSelect" type="button" value="全选" onclick="selectAll()"/></th>
 					<th>模块名</th>
 					<th>访问地址</th>
 					<th>是否已经加载</th>
@@ -87,7 +114,7 @@
 			<tbody id="dataBody">
 				<c:forEach var="module" items="${moduleList }">
 					<tr>
-						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" name="moduleId" value="${module.id }"/></td>
 						<td>${module.name }</td>
 						<td>${module.url }</td>
 						<c:if test="${module.loaded=='false' }">
@@ -111,6 +138,7 @@
 			</tbody>
 		</table>
 	</div>
+	</form>
 </div>
 </body>
 </html>

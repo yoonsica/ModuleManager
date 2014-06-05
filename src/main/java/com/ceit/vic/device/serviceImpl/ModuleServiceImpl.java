@@ -231,13 +231,10 @@ public class ModuleServiceImpl implements ModuleService {
 			output = new XMLWriter(new FileOutputStream(file), outFmt);
 			output.write(document);
 			output.close();
-		} catch (UnsupportedEncodingException | FileNotFoundException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		moduleMap.remove(module.getId());
 	}
 

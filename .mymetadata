@@ -3,7 +3,7 @@
   type="WEB"
   name="ModuleManager"
   id="myeclipse.1384936102271"
-  context-root="/filemanager"
+  context-root="/ModuleManager"
   j2ee-spec="1.7"
   archive="ModuleManager.war">
   <attributes>

@@ -40,13 +40,16 @@ request.setAttribute("basePath", basePath);
     	    }
     	    $("#form").submit();
     	  });
+    	   $("#cancel").click(function(){
+    	    window.location.href = "${basePath}jsp/index.jsp";
+    	  });
     	});
     </script>
     <style type="text/css">
     </style>
   </head>
   
-  <body>
+  <body >
   <div class="container">
   <div style="margin-bottom:5px;background-color: #028002;width: 100%;color: white;font-size:20px;font-weight: 800;height: 30px;line-height: 30px;">
 			添加模块
@@ -56,7 +59,7 @@ request.setAttribute("basePath", basePath);
 		    <label for="moduleId" class="control-label">模块ID</label>
 		    <div class="controls">
 		    	<div class="row">
-				    <div class="span3"><input type="text" name="moduleId" id="moduleId" placeholder="模块ID项请填写模块英文名称"/></div>
+				    <div class="span3"><input type="text" name="moduleId" id="moduleId" /></div>
 		    		<div class="span4">模块ID项请填写模块英文名称</div>
 		    	</div>
 		    </div>
@@ -92,6 +95,9 @@ request.setAttribute("basePath", basePath);
 	    	<div class="controls">
 	    		<button type="submit" class="btn btn-success" id="btn" >
 				  提交
+				</button> 
+				<button type="cancel" class="btn btn-success" id="btn" >
+				  取消
 				</button> 
 			</div>
     	</div>

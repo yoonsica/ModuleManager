@@ -54,6 +54,9 @@ request.setAttribute("basePath", basePath);
     	    }
     	    $("#form").submit();
     	  });
+    	   $("#cancel").click(function(){
+    	    window.location.href = "${basePath}jsp/index.jsp";
+    	  });
     	});
     </script>
   </head>
@@ -118,6 +121,9 @@ request.setAttribute("basePath", basePath);
 	    		<button type="submit" class="btn btn-success" id="btn" >
 				  提交
 				</button> 
+				<button type="cancel" class="btn btn-success" id="btn" >
+				  取消
+				</button>
 			</div>
     	</div>
     </form> 

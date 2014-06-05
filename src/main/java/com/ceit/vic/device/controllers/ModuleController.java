@@ -31,7 +31,45 @@ public class ModuleController {
 	static Logger logger = Logger.getLogger(ModuleController.class);
 	@Autowired
 	ModuleService moduleService;
-
+	
+	@ResponseBody
+	@RequestMapping("/moduleList")
+	public List<Module> moduleList() throws Exception {
+		Properties prop = new Properties();
+		InputStream in = this.getClass().getResourceAsStream("/location.properties");
+		prop.load(in);
+		System.out.println(prop.getProperty("module"));
+		List<Module> moduleList = moduleService.moduleStatus(prop.getProperty("module"));
+		return moduleList;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/deleteModules",produces="text/plain;charset=UTF-8")
+	public String deleteModules(String[] idArray) throws Exception {
+		for (String i : idArray) {
+			moduleService.deleteModule(i);
+		}
+		return "删除成功";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/deployModules",produces="text/plain;charset=UTF-8")
+	public String deployModules(String[] idArray) throws Exception {
+		for (String i : idArray) {
+			moduleService.deploy(i);
+		}
+		return "部署成功！";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/undeployModules",produces="text/plain;charset=UTF-8")
+	public String undeployModules(String[] idArray) throws Exception {
+		for (String i : idArray) {
+			moduleService.undeploy(i);
+		}
+		return "卸载成功！";
+	}
+	
 	@RequestMapping("/status")
 	public ModelAndView modules() throws Exception {
 		ModelAndView mav = new ModelAndView("MyJsp");
@@ -120,7 +158,7 @@ public class ModuleController {
 	}
 
 	@RequestMapping("/updateModule")
-	public String updateModule(@RequestParam("ejb") CommonsMultipartFile ejbFile,
+	public ModelAndView updateModule(@RequestParam("ejb") CommonsMultipartFile ejbFile,
 			@RequestParam("web") CommonsMultipartFile webFile,
 			@RequestParam("moduleId") String moduleId,
 			@RequestParam("moduleName") String moduleName) throws Exception {
@@ -164,7 +202,8 @@ public class ModuleController {
 		module.setName(moduleName);
 		module.setProjects(projects);
 		moduleService.updateModule(module);
-		return "redirect:/modules/status";
+		ModelAndView mv = new ModelAndView("index");
+		return mv;
 	}
 	
 	@RequestMapping("/deleteModule/{moduleId}")

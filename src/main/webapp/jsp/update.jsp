@@ -21,10 +21,10 @@ request.setAttribute("basePath", basePath);
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
 <!-- Loading Bootstrap -->
-<link href="${basePath }bootstrap/css/bootstrap.css"
+<link href="${basePath }static/bootstrap/css/bootstrap.css"
 	rel="stylesheet">
-<script src="${basePath }bootstrap/js/jquery-1.8.3.min.js"></script>
-<script src="${basePath }bootstrap/js/bootstrap.min.js"></script>
+<script src="${basePath }static/bootstrap/js/jquery-1.8.3.min.js"></script>
+<script src="${basePath }static/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript">
     function reselejbfile(){
     	$("#selejbfile").hide();

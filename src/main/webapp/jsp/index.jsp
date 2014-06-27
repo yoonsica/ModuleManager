@@ -51,7 +51,7 @@
 					iconCls:'icon-add',
 					handler:function(){
 						$('#btnsave').linkbutton('enable');
-						top.window.location.href = "${basePath }jsp/upload.jsp";
+						window.location.href = "${basePath }jsp/upload.jsp";
 					}
 				},{
 					id:'btnadd',
@@ -134,6 +134,14 @@
 			               		location.reload();
 			               }  
 	        			});
+					}
+				},{
+					id:'btnSet',
+					text:'设置',
+					iconCls:'icon-up',
+					handler:function(){
+						$('#btnup').linkbutton('enable');
+						window.location.href = "${basePath}modules/toSetLocation";
 					}
 				}
 				]

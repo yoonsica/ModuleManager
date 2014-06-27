@@ -40,7 +40,6 @@ public class ModuleServiceImpl implements ModuleService {
 	InstalledLocalContainer container;
 
 	public ModuleServiceImpl() {
-
 	}
 	@Override
 	public String getModulesLocation() {
@@ -285,6 +284,22 @@ public class ModuleServiceImpl implements ModuleService {
 	@Override
 	public Module getModuleById(String moduleId) {
 		return moduleMap.get(moduleId);
+	}
+	@Override
+	public String getJbossLocation() {
+		return jbossLocation;
+	}
+	@Override
+	public void updateLocation(String jbossLocation, String modulesLocation) throws Exception {
+		Element moduleElement = rootElm.elementByID("jbossLocation");
+		moduleElement.setText(jbossLocation);
+		Element moduleElement1 = rootElm.elementByID("modulesLocation");
+		moduleElement1.setText(modulesLocation);
+		OutputFormat outFmt = new OutputFormat("\t", true);
+		outFmt.setEncoding("UTF-8");
+		XMLWriter output = new XMLWriter(new FileOutputStream(file), outFmt);
+		output.write(document);
+		output.close();
 	}
 
 }

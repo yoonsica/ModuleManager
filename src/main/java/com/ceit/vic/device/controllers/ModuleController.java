@@ -72,7 +72,7 @@ public class ModuleController {
 	
 	@RequestMapping("/status")
 	public ModelAndView modules() throws Exception {
-		ModelAndView mav = new ModelAndView("MyJsp");
+		ModelAndView mav = new ModelAndView("index");
 		Properties prop = new Properties();
 		InputStream in = this.getClass().getResourceAsStream("/location.properties");
 		prop.load(in);
@@ -245,4 +245,22 @@ public class ModuleController {
 		return "redirect:/modules/status";
 	}
 	
+	@RequestMapping("/toSetLocation")
+	public ModelAndView toSetLocation(){
+		ModelAndView mav = new ModelAndView("setLocation");
+		//去service取得module对象
+		mav.addObject("jbossLocation", moduleService.getJbossLocation());
+		mav.addObject("modulesLocation",moduleService.getModulesLocation());
+		return mav;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/setLocation")
+	public String setLocation(@RequestParam String jbossLocation,
+			@RequestParam String modulesLocation) throws Exception {
+		System.out.println(jbossLocation+"||"+modulesLocation);
+		moduleService.updateLocation(jbossLocation,modulesLocation);
+		return "设置成功！";
+	}
+
 }

@@ -58,7 +58,7 @@ request.setAttribute("basePath", basePath);
   
   	<form id="form" action="${basePath }modules/addModule" method="post" enctype="multipart/form-data">  
   		<table width="100%">
-  		<tr><td colspan="3"><div style="margin-bottom:5px;background-color: #028002;width: 100%;color: white;font-size:20px;font-weight: 800;height: 30px;line-height: 30px;">
+  		<tr><td colspan="3"><div style="margin-bottom:5px;background: url('${basePath}static/easyui/themes/default/images/panel_title.png') repeat;width: 100%;font-size:20px;font-weight: 800;height: 30px;line-height: 30px;">
 			添加模块
 	</div></td></tr>
   			<tr>

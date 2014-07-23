@@ -20,11 +20,16 @@ request.setAttribute("basePath", basePath);
 	<!--
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
-<!-- Loading Bootstrap -->
-<link href="${basePath }static/bootstrap/css/bootstrap.css"
-	rel="stylesheet">
 <script src="${basePath }static/bootstrap/js/jquery-1.8.3.min.js"></script>
-<script src="${basePath }static/bootstrap/js/bootstrap.min.js"></script>
+<style type="text/css">
+    .base-div { 
+    	width: 800px; 
+    	height: 600px; 
+    	left: 50%; 
+    	margin: 0 0 0 -400px; 
+    	position: absolute; 
+    }
+    </style>
     <script type="text/javascript">
     function reselejbfile(){
     	$("#selejbfile").hide();
@@ -37,7 +42,7 @@ request.setAttribute("basePath", basePath);
     	$("input[name='web']").show();
     }
     $(document).ready(function(){
-    	  $("#btn").click(function(){
+    	  $("#submitBtn").click(function(){
     	    var str = $("input[name='ejb']").val();
     	    var reg = new RegExp(".jar$");
     	    if(str!=''){
@@ -54,7 +59,7 @@ request.setAttribute("basePath", basePath);
     	    }
     	    $("#form").submit();
     	  });
-    	   $("#cancel").click(function(){
+    	   $("#cancleBtn").click(function(){
     	    window.location.href = "${basePath}jsp/index.jsp";
     	  });
     	});
@@ -62,70 +67,41 @@ request.setAttribute("basePath", basePath);
   </head>
   
   <body>
-  <div class="container">
-  <div style="margin-bottom:5px; background-color: #028002;width: 100%;color: white;font-size:20px;font-weight: 800;height: 30px;line-height: 30px;">
+  <div class="base-div">
+  	<form id="form" action="${basePath }modules/updateModule" method="post" enctype="multipart/form-data">  
+    	<table width="100%">
+  		<tr><td colspan="3"><div style="margin-bottom:5px;background-color: #028002;width: 100%;color: white;font-size:20px;font-weight: 800;height: 30px;line-height: 30px;">
 			更新模块
-	</div>
-  	<form id="form" class="form-horizontal" action="${basePath }modules/updateModule" method="post" enctype="multipart/form-data">  
-    	<div class="control-group">
-		    <label for="moduleId" class="control-label">模块ID</label>
-		    <div class="controls">
-		    	<div class="row">
-    		    	<div class="span3"><input type="text" name="moduleId" value="${module.id }" placeholder="模块ID项请填写模块英文名称"/></div>
-    		    	<div class="span4">模块ID项请填写模块英文名称</div>
-		   		</div>
-		    </div>
-		</div>
-    	<div class="control-group">
-		    <label for="moduleName" class="control-label">模块描述</label>
-		    <div class="controls">
-			    <div class="row">
-			    	<div class="span3">
-			    		<input type="text" name="moduleName" value="${module.name }" placeholder="模块描述项填写模块中文名称">
-					</div>
-					<div class="span4">
-				    	 模块描述项填写模块中文名称
-				    </div>
-				</div>
-		    </div>
-		</div>
+	</div></td></tr>
+  			<tr>
+  				<td><label for="moduleId">模块ID</label></td>
+  				<td><input type="text" name="moduleId" id="moduleId" value="${module.id }" style="width: 200;"/></td>
+  				<td><div>模块ID项请填写模块英文名称</div></td>
+  			</tr>
+  			<tr>
+  				<td><label for="moduleName">模块描述</label></td>
+  				<td><input type="text" name="moduleName" value="${module.name }" style="width: 200;"></td>
+  				<td><div>模块描述项填写模块中文名称</div></td>
+  			</tr>
+  			<c:forEach var="project" items="${module.projects }">
+    			<c:if test="${project.type=='ejb' }">
+		  			<tr>
+		  				<td><label for="ejb" >ejb工程</label></td>
+		  				<td><input type="file" id="ejb" name="ejb" style="display: none;"/><input type="text" name="ejbloc" value="${project.name }" style="width: 200;"/></td>
+		  				<td><input type="button" id="selejbfile" onclick="reselejbfile()" value="重新选择ejb工程" /></td>
+		  			</tr>
+  				</c:if>
+  				<c:if test="${project.type=='web' }">
+		  			<tr>
+		  				<td><label for="web" class="control-label">web工程</label></td>
+		  				<td><input type="file" name="web" style="display: none;"/><input type="text" name="webloc" value="${project.name }" style="width: 200;"/></td>
+		  				<td><input type="button" id="selwebfile" onclick="reselwebfile()" value="重新选择web工程"/></td>
+		  			</tr>
+	  			</c:if>
+    		</c:forEach>
+  		</table>
     	
-    	<c:forEach var="project" items="${module.projects }">
-    		<c:if test="${project.type=='ejb' }">
-	    		<div class="control-group">
-	    			<label for="ejb" class="control-label">ejb工程</label>
-	    			<div class="controls">
-	    				<div class="row">
-			    			<input type="file" id="ejb" name="ejb" style="display: none;"/>
-			    			<div class="span3"><input type="text" name="ejbloc" value="${project.name }"/></div>
-			    			<div class="span4"><input type="button" id="selejbfile" onclick="reselejbfile()" value="重新选择ejb工程" /></div>
-		    			</div>
-	    			</div>
-	    		</div>
-    		</c:if>
-    		<c:if test="${project.type=='web' }">
-	    		<div class="control-group">
-	    			<label for="web" class="control-label">web工程</label>
-	    			<div class="controls">
-		    			<div class="row">
-		    				<input type="file" name="web" style="display: none;"/>
-	    			    	<div class="span3"><input type="text" name="webloc" value="${project.name }"/></div>
-	    			    	<div class="span4"><input type="button" id="selwebfile" onclick="reselwebfile()" value="重新选择web工程"/></div>
-		    			</div>
-	    			</div>
-	    		</div>
-    		</c:if>
-    	</c:forEach>
-    	<div class="control-group">
-	    	<div class="controls">
-	    		<button type="submit" class="btn btn-success" id="btn" >
-				  提交
-				</button> 
-				<button type="cancel" class="btn btn-success" id="btn" >
-				  取消
-				</button>
-			</div>
-    	</div>
+	    <div align="center" style="margin-top: 10px;"><input type="submit" id="submitBtn" value="确定"/>&nbsp;&nbsp;&nbsp;<input type="button" id="cancleBtn" value="取消"/></div>
     </form> 
   	</div>
   </body>

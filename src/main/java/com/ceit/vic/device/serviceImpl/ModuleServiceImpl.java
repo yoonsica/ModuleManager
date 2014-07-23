@@ -1,11 +1,13 @@
 package com.ceit.vic.device.serviceImpl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +40,6 @@ public class ModuleServiceImpl implements ModuleService {
 	File file;
 	Map<String, Module> moduleMap = new HashMap<String, Module>();
 	InstalledLocalContainer container;
-
 	public ModuleServiceImpl() {
 	}
 	@Override
@@ -49,7 +50,6 @@ public class ModuleServiceImpl implements ModuleService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Module> moduleStatus(String xmlPath) throws Exception {
-		System.out.println(xmlPath);
 		file = new File(xmlPath);
 		SAXReader saxReader = new SAXReader();
 		document = saxReader.read(file);
@@ -57,6 +57,7 @@ public class ModuleServiceImpl implements ModuleService {
 		System.out.println(rootElm.getName());
 		List<Element> moduleElmList = rootElm.elements();
 		List<Module> moduleList = new ArrayList<Module>();
+		String serverIp = getServerIp();
 		for (Element moduleElement : moduleElmList) {
 			if (moduleElement.attributeValue("ID").equals("jbossLocation")) {
 				jbossLocation = moduleElement.getTextTrim();
@@ -75,7 +76,7 @@ public class ModuleServiceImpl implements ModuleService {
 					project.setName(projectElement.attributeValue("name"));
 					project.setType(projectElement.attributeValue("type"));
 					if (project.getType().equals("web")) {
-						module.setUrl("http://localhost:8080/"
+						module.setUrl("http://"+serverIp+":8080/"
 								+ project.getName() + "/index.jsp");
 					}
 					projectList.add(project);
@@ -100,6 +101,7 @@ public class ModuleServiceImpl implements ModuleService {
 		 * JBossExistingLocalConfiguration(jbossLocation+"server/default"));
 		 * container.setHome(jbossLocation);
 		 */
+		String serverIp = getServerIp();
 		Deployable ejb = null, web = null;
 		String webURL = null;
 		Module module = moduleMap.get(moduleId);
@@ -109,7 +111,7 @@ public class ModuleServiceImpl implements ModuleService {
 				ejb = new EJB(modulesLocation + project.getName() + ".jar");
 			} else if (project.getType().equals("web")) {
 				web = new WAR(modulesLocation + project.getName() + ".war");
-				webURL = "http://localhost:8080/" + project.getName()
+				webURL = "http://"+serverIp+":8080/" + project.getName()
 						+ "/index.jsp";
 			}
 		}
@@ -301,5 +303,37 @@ public class ModuleServiceImpl implements ModuleService {
 		output.write(document);
 		output.close();
 	}
+	@Override
+	public String getServerIp(){  
+		System.out.println("***");
+	    try {  
+	    	InetAddress inet = InetAddress.getLocalHost();
+
+	        String hostAddress=inet.getHostAddress();
+	        /*Enumeration netInterfaces = NetworkInterface.getNetworkInterfaces();  
+	        InetAddress ip = null;  
+	        while (netInterfaces.hasMoreElements()) {  
+	            NetworkInterface ni = (NetworkInterface) netInterfaces  
+	                    .nextElement();  
+	            ip = (InetAddress) ni.getInetAddresses().nextElement();  
+	            SERVER_IP = ip.getHostAddress();  
+	            if (!ip.isSiteLocalAddress() && !ip.isLoopbackAddress()  
+	                    && ip.getHostAddress().indexOf(":") == -1) {  
+	                SERVER_IP = ip.getHostAddress();  
+	                break;  
+	            } else {  
+	                ip = null;  
+	            }  
+	        }  
+	    } catch (Exception e) {  
+	        e.printStackTrace();  
+	    }  
+	     */ 
+	        return hostAddress;
+	      }catch (Exception e) {  
+		        e.printStackTrace();  
+		    }  
+	       return null;
+	   } 
 
 }

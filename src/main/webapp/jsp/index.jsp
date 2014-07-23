@@ -75,6 +75,7 @@
 						var rows = $('#test').datagrid('getSelections');//获得选中行
 						var idArray = new Array();
 						for(var i=0; i<rows.length; i++){
+							alert(rows[i].id);
 						    idArray.push(rows[i].id);
 						}
 						$.ajax({  
@@ -138,7 +139,7 @@
 				},{
 					id:'btnSet',
 					text:'设置',
-					iconCls:'icon-up',
+					iconCls:'icon-85',
 					handler:function(){
 						$('#btnup').linkbutton('enable');
 						window.location.href = "${basePath}modules/toSetLocation";

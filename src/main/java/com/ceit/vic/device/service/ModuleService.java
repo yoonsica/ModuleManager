@@ -42,5 +42,7 @@ public interface ModuleService {
 	String getModulesLocation();
 	String getJbossLocation();
 	Module getModuleById(String moduleId);
+	String getServerIp();
+	
 	public void updateLocation(String jbossLocation, String modulesLocation) throws Exception;
 }
